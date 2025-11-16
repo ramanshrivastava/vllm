@@ -61,7 +61,7 @@ print(text)  # "Hello, world!"
 ### ✅ Phase 1: Single-Request Inference (Current)
 
 - [x] **1.1: Tokenizer** - HuggingFace wrapper (~300 lines)
-- [ ] 1.2: Simple KV Cache - Contiguous memory
+- [x] **1.2: Simple KV Cache** - Contiguous memory (~600 lines)
 - [ ] 1.3: Model Loading - Load from HuggingFace
 - [ ] 1.4: Attention Layer - Standard attention
 - [ ] 1.5: Sampler - Greedy sampling
@@ -179,6 +179,24 @@ After building mini-vLLM, you will understand:
 
 **See:** `docs/adrs/001-tokenizer-choice.md` for design rationale
 
+#### KV Cache (`mini_vllm/kv_cache/`)
+
+**Purpose:** Store attention keys/values to avoid recomputation
+
+**Implementation:** Contiguous memory allocation (simple but inefficient)
+
+**Lines:** ~600
+
+**Key Features:**
+- Store K/V states for previous tokens
+- Retrieve for attention computation
+- Track memory usage and waste
+- Demonstrates why PagedAttention is needed
+
+**Key Insight:** Wastes ~95% of memory! This motivates Phase 2 (PagedAttention).
+
+**See:** `docs/adrs/002-simple-kv-cache.md` for design rationale
+
 ## 🔬 Comparison with vLLM
 
 | Feature | Mini-vLLM | Real vLLM | Difference |
@@ -248,10 +266,10 @@ Educational project - follow the spirit of learning!
 
 ---
 
-**Current Phase:** 1.1 (Tokenizer) ✅ Complete
+**Current Phase:** 1.2 (Simple KV Cache) ✅ Complete
 
-**Next Up:** Phase 1.2 (Simple KV Cache)
+**Next Up:** Phase 1.3 (Model Loading)
 
-**Progress:** 1/35 commits (3% complete)
+**Progress:** 2/35 commits (6% complete)
 
 Happy learning! 🎓
